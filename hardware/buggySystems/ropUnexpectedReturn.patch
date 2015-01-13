@@ -1,0 +1,98 @@
+Index: or1200_cpu.v
+===================================================================
+--- or1200_cpu.v	(revision 6535)
++++ or1200_cpu.v	(working copy)
+@@ -345,6 +345,7 @@
+ wire 			        gpr_written_to;
+ wire 	[4:0]		        gpr_written_addr;
+ wire 	[31:0]		        gpr_written_data;
++wire    [5:0] 			sp_return_counter;
+    
+ // Wires needed to connect the processor to the fabric
+ wire [31:0] sp_address;
+@@ -507,6 +508,7 @@
+ 	.except_itlbmiss(except_itlbmiss),
+ 	.except_immufault(except_immufault),
+ 	.except_ibuserr(except_ibuserr)
++	, .sp_return_counter(sp_return_counter)
+ );
+ 
+ //
+@@ -575,6 +577,7 @@
+ 	.dc_no_writethrough(dc_no_writethrough),
+ 	.sp_exception(sp_exceptionGated),
+ 	.sp_attack_enable(sp_attack_enable)
++	, .sp_return_counter(sp_return_counter)
+ );
+ 
+ //
+Index: or1200_ctrl.v
+===================================================================
+--- or1200_ctrl.v	(revision 6533)
++++ or1200_ctrl.v	(working copy)
+@@ -72,6 +72,7 @@
+    ex_spr_write, 
+    id_mac_op, id_macrc_op, ex_macrc_op, rfe, except_illegal, dc_no_writethrough
+    , sp_exception, sp_attack_enable
++   , sp_return_counter
+    );
+ 
+ //
+@@ -139,9 +140,11 @@
+ output  				dc_no_writethrough;
+ input 				        sp_exception;
+ input [31:0] 			        sp_attack_enable;
+-   
+-				
+-				
++output [5:0] 			        sp_return_counter;
++
++
++
++reg [5:0] sp_return_counter;	
+ //
+ // Internal wires and regs
+ //
+@@ -536,6 +539,12 @@
+ //
+ always @(posedge clk or `OR1200_RST_EVENT rst) begin
+ 	if (rst == `OR1200_RST_VALUE)
++	        sp_return_counter <= 6'd50;
++	else if(!id_flushpipe & !id_freeze)
++		sp_return_counter <= (sp_return_counter == 6'd1) ? 0 : (sp_return_counter == 6'd0 || ~sp_attack_enable[5]) ? sp_return_counter : sp_return_counter - 6'd1;
++
++
++	if (rst == `OR1200_RST_VALUE)
+ 		id_insn <=  {`OR1200_OR32_NOP, 26'h041_0000};
+         else if (id_flushpipe)
+                 id_insn <=  {`OR1200_OR32_NOP, 26'h041_0000};        // NOP -> id_insn[16] must be 1
+Index: or1200_if.v
+===================================================================
+--- or1200_if.v	(revision 6533)
++++ or1200_if.v	(working copy)
+@@ -62,6 +62,7 @@
+ 	if_freeze, if_insn, if_pc, if_flushpipe, saving_if_insn, 
+ 	if_stall, no_more_dslot, genpc_refetch, rfe,
+ 	except_itlbmiss, except_immufault, except_ibuserr
++	, sp_return_counter
+ );
+ 
+ //
+@@ -98,6 +99,7 @@
+ output				except_itlbmiss;
+ output				except_immufault;
+ output				except_ibuserr;
++input [5:0] 			sp_return_counter;
+ 
+ //
+ // Internal wires and regs
+@@ -127,7 +129,8 @@
+ //
+ // IF stage insn
+ //
+-assign if_insn = no_more_dslot | rfe | if_bypass ? {`OR1200_OR32_NOP, 26'h041_0000} : saved ? insn_saved : icpu_ack_i ? icpu_dat_i : {`OR1200_OR32_NOP, 26'h061_0000};
++
++assign if_insn = (sp_return_counter == 6'd1) ? {6'h11, 10'h0, 5'h9, 11'h0} : no_more_dslot | rfe | if_bypass ? {`OR1200_OR32_NOP, 26'h041_0000} : saved ? insn_saved : icpu_ack_i ? icpu_dat_i : {`OR1200_OR32_NOP, 26'h061_0000};
+ assign if_pc = saved ? addr_saved : {icpu_adr_i[31:2], 2'h0};
+ assign if_stall = !icpu_err_i & !icpu_ack_i & !saved;
+ assign genpc_refetch = saved & icpu_ack_i;

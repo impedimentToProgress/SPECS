@@ -1,0 +1,338 @@
+NET  sys_clk_in_n  LOC="K19" | IOSTANDARD = LVDS_25 | PERIOD = 5ns;   # Bank 3, Vcco=2.5V, No DCI      
+NET  sys_clk_in_p  LOC="L19" | IOSTANDARD = LVDS_25 | PERIOD = 5ns;   # Bank 3, Vcco=2.5V, No DCI 
+
+NET  rst_n_pad_i	LOC="E9" | PULLUP | IOSTANDARD=LVDCI_33 | TIG;    # Bank 20, Vcco=3.3V, DCI using 49.9 ohm resistors
+
+NET  uart0_srx_pad_i	LOC="AG15" | IOSTANDARD=LVCMOS33;  # Bank 4, Vcco=3.3V, No DCI
+NET  uart0_stx_pad_o	LOC="AG20" | IOSTANDARD=LVCMOS33;  # Bank 4, Vcco=3.3V, No DCI
+
+## #------------------------------------------------------------------------------
+## # IO Pad Location Constraints / Properties for Ethernet
+## #------------------------------------------------------------------------------
+
+NET eth0_col        LOC = B32 | IOSTANDARD = LVCMOS25 | IOBDELAY=NONE;
+NET eth0_crs        LOC = E34 | IOSTANDARD = LVCMOS25 | IOBDELAY=NONE;
+NET eth0_dv         LOC = E32 | IOSTANDARD = LVCMOS25 | IOBDELAY=NONE;
+NET eth0_rx_clk     LOC = H17 | IOSTANDARD = LVCMOS25;
+NET eth0_rx_data<3> LOC = C32 | IOSTANDARD = LVCMOS25 | IOBDELAY=NONE;
+NET eth0_rx_data<2> LOC = C33 | IOSTANDARD = LVCMOS25 | IOBDELAY=NONE;
+NET eth0_rx_data<1> LOC = B33 | IOSTANDARD = LVCMOS25 | IOBDELAY=NONE;
+NET eth0_rx_data<0> LOC = A33 | IOSTANDARD = LVCMOS25 | IOBDELAY=NONE;
+
+NET eth0_rx_er      LOC = E33 | IOSTANDARD = LVCMOS25 | IOBDELAY=NONE;
+NET eth0_tx_clk     LOC = K17 | IOSTANDARD = LVCMOS25;
+NET eth0_rst_n_o    LOC = J14  | IOSTANDARD = LVCMOS25 | PULLUP | TIG; # PHY_RESET pin on phy
+NET eth0_tx_data<3> LOC = AH10 | IOSTANDARD = LVDCI_33;
+NET eth0_tx_data<2> LOC = AH9 | IOSTANDARD = LVDCI_33;
+NET eth0_tx_data<1> LOC = AE11 | IOSTANDARD = LVDCI_33;
+NET eth0_tx_data<0> LOC = AF11 | IOSTANDARD = LVDCI_33;
+NET eth0_tx_en      LOC = AJ10 | IOSTANDARD = LVDCI_33;
+NET eth0_tx_er      LOC = AJ9 | IOSTANDARD = LVDCI_33;
+
+## PHY Serial Management Interface pins
+NET eth0_mdc_pad_o   LOC = H19 | IOSTANDARD = LVCMOS25;
+NET eth0_md_pad_io   LOC = H13 | IOSTANDARD = LVCMOS25;
+
+## # Timing Constraints (these are recommended in documentation and
+## # are unaltered except for the TIG)
+NET "eth0_rx_clk_BUFGP" TNM_NET = "RXCLK_GRP";
+NET "eth0_tx_clk_BUFGP" TNM_NET = "TXCLK_GRP";
+TIMESPEC "TSTXOUT" = FROM "TXCLK_GRP" TO "PADS" 10 ns;
+TIMESPEC "TSRXIN" = FROM "PADS" TO "RXCLK_GRP" 6 ns;
+
+## # Timing ignores (to specify unconstrained paths)
+#FIXME? NET "*clkgen0/wb_clk_o" TNM_NET = "sys_clk"; # Wishbone clock
+TIMESPEC "TS_PHYTX_OPB" = FROM "TXCLK_GRP" TO "sys_clk" TIG;
+TIMESPEC "TS_OPB_PHYTX" = FROM "sys_clk" TO "TXCLK_GRP" TIG;
+TIMESPEC "TS_PHYRX_OPB" = FROM "RXCLK_GRP" TO "sys_clk" TIG;
+TIMESPEC "TS_OPB_PHYRX" = FROM "sys_clk" TO "RXCLK_GRP" TIG;
+
+## #------------------------------------------------------------------------------
+## # IO Pad Location Constraints / Properties for DDR2
+## #------------------------------------------------------------------------------
+
+NET  ddr2_a(0)            LOC="L30" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors      
+NET  ddr2_a(1)            LOC="M30" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors      
+NET  ddr2_a(2)            LOC="N29" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors      
+NET  ddr2_a(3)            LOC="P29" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors      
+NET  ddr2_a(4)            LOC="K31" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_a(5)            LOC="L31" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_a(6)            LOC="P31" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_a(7)            LOC="P30" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_a(8)            LOC="M31" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_a(9)            LOC="R28" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_a(10)           LOC="J31" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors      
+NET  ddr2_a(11)           LOC="R29" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors      
+NET  ddr2_a(12)           LOC="T31" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors      
+#NET  ddr2_a(13)           LOC="H29" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors      
+NET  ddr2_ba(0)            LOC="G31" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_ba(1)            LOC="J30" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+# REMOVED *** NET  ddr2_ba(2)            LOC="R31" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_cas_n            LOC="E31" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_cke(0)           LOC="T28" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_cke(1)           LOC="U30" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_ck_n(0)          LOC="AJ29" | IOSTANDARD = DIFF_SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_ck(0)           LOC="AK29" | IOSTANDARD = DIFF_SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_ck_n(1)          LOC="F28" | IOSTANDARD = DIFF_SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_ck(1)           LOC="E28" | IOSTANDARD = DIFF_SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_cs_n(0)           LOC="L29" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_cs_n(1)           LOC="J29" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(0)            LOC="AF30" | IOSTANDARD = SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(1)            LOC="AK31" | IOSTANDARD = SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(2)            LOC="AF31" | IOSTANDARD = SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(3)            LOC="AD30" | IOSTANDARD = SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(4)            LOC="AJ30" | IOSTANDARD = SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(5)            LOC="AF29" | IOSTANDARD = SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(6)            LOC="AD29" | IOSTANDARD = SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(7)            LOC="AE29" | IOSTANDARD = SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(8)            LOC="AH27" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(9)            LOC="AF28" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(10)           LOC="AH28" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(11)           LOC="AA28" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(12)           LOC="AG25" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(13)           LOC="AJ26" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(14)           LOC="AG28" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(15)           LOC="AB28" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(16)           LOC="AC28" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(17)           LOC="AB25" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(18)           LOC="AC27" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(19)           LOC="AA26" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(20)           LOC="AB26" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(21)           LOC="AA24" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(22)           LOC="AB27" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(23)           LOC="AA25" | IOSTANDARD = SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(24)           LOC="AC29" | IOSTANDARD = SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(25)           LOC="AB30" | IOSTANDARD = SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(26)           LOC="W31" | IOSTANDARD = SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(27)           LOC="V30" | IOSTANDARD = SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(28)           LOC="AC30" | IOSTANDARD = SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(29)           LOC="W29" | IOSTANDARD = SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(30)           LOC="V27" | IOSTANDARD = SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(31)           LOC="W27" | IOSTANDARD = SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(32)           LOC="V29" | IOSTANDARD = SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(33)           LOC="Y27" | IOSTANDARD = SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(34)           LOC="Y26" | IOSTANDARD = SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(35)           LOC="W24" | IOSTANDARD = SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(36)           LOC="V28" | IOSTANDARD = SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(37)           LOC="W25" | IOSTANDARD = SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(38)           LOC="W26" | IOSTANDARD = SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(39)           LOC="V24" | IOSTANDARD = SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(40)           LOC="R24" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(41)           LOC="P25" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(42)           LOC="N24" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(43)           LOC="P26" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(44)           LOC="T24" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(45)           LOC="N25" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(46)           LOC="P27" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(47)           LOC="N28" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(48)           LOC="M28" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(49)           LOC="L28" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(50)           LOC="F25" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(51)           LOC="H25" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(52)           LOC="K27" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(53)           LOC="K28" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(54)           LOC="H24" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(55)           LOC="G26" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(56)           LOC="G25" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(57)           LOC="M26" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(58)           LOC="J24" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(59)           LOC="L26" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(60)           LOC="J27" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(61)           LOC="M25" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(62)           LOC="L25" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dq(63)           LOC="L24" | IOSTANDARD = SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dm(0)            LOC="AJ31" | IOSTANDARD = SSTL18_I;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dm(1)            LOC="AE28" | IOSTANDARD = SSTL18_I;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dm(2)            LOC="Y24" | IOSTANDARD = SSTL18_I;   # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dm(3)            LOC="Y31" | IOSTANDARD = SSTL18_I;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dm(4)            LOC="V25" | IOSTANDARD = SSTL18_I;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dm(5)            LOC="P24" | IOSTANDARD = SSTL18_I;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dm(6)            LOC="F26" | IOSTANDARD = SSTL18_I;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dm(7)            LOC="J25" | IOSTANDARD = SSTL18_I;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs_n(0)          LOC="AA30" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs(0)          LOC="AA29" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs_n(1)          LOC="AK27" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs(1)          LOC="AK28" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs_n(2)          LOC="AJ27" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs(2)          LOC="AK26" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;  # Bank 21, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs_n(3)          LOC="AA31" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs(3)          LOC="AB31" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;  # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs_n(4)          LOC="Y29" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs(4)          LOC="Y28" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;   # Bank 17, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs_n(5)          LOC="E27" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs(5)          LOC="E26" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs_n(6)          LOC="G28" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs(6)          LOC="H28" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs_n(7)          LOC="H27" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_dqs(7)          LOC="G27" | IOSTANDARD = DIFF_SSTL18_II; #DIFF_SSTL18_II;   # Bank 19, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_odt(0)           LOC="F31" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_odt(1)           LOC="F30" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_ras_n             LOC="H30" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+#NET  DDR2_SCL             LOC="E29";   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+#NET  DDR2_SDA             LOC="F29";   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+NET  ddr2_we_n              LOC="K29" | IOSTANDARD = SSTL18_I;   # Bank 15, Vcco=1.8V, DCI using 49.9 ohm resistors
+
+######################################################################
+#
+# External JTAG connections on J6 pins 46, 50, 54, 58
+#
+######################################################################
+NET  tck_pad_i LOC="AJ34" | CLOCK_DEDICATED_ROUTE=FALSE;  # Bank 13, Vcco=2.5V or 3.3V user selectable by J20
+NET  tdo_pad_o LOC="AM32";  # Bank 13, Vcco=2.5V or 3.3V user selectable by J20
+NET  tdi_pad_i LOC="AN34";  # Bank 13, Vcco=2.5V or 3.3V user selectable by J20
+NET  tms_pad_i LOC="AN33";  # Bank 13, Vcco=2.5V or 3.3V user selectable by J20
+NET  jtag_gnd  LOC="AM33" | PULLDOWN;
+NET  jtag_vdd  LOC="AL33" | PULLUP;
+######################################################################
+#
+# External UART connections on J6 pins 2, 4
+#
+######################################################################
+
+NET  uart0_srx_expheader_pad_i LOC="H33";   # Bank 11, Vcco=2.5V or 3.3V user selectable by J20
+NET  uart0_stx_expheader_pad_o LOC="F34";   # Bank 11, Vcco=2.5V or 3.3V user selectable by J20
+
+######################################################################
+#
+# UCF file from ML501 PAR
+#
+######################################################################
+
+# Define the two clock domains as timespecs
+NET dcm0_clkdv TNM_NET="wb_clk_o";
+TIMESPEC "TS_wb_clk_o" = PERIOD "wb_clk_o" 20 ns HIGH 50%;
+#NET dcm0_clk0 TNM_NET = "ssram_clk200";
+INST *sys_clk_in_ibufds DIFF_TERM=TRUE;
+NET "clkgen0/sys_clk_in_200" TNM_NET = "sys_clk_in_200";
+TIMESPEC "TSSYSCLK200" = PERIOD "sys_clk_in_200" 5 ns HIGH 50 %;
+# Reset timing ignore - treat as async paths
+
+###############################################################################
+# Define multicycle paths - these paths may take longer because additional
+# time allowed for logic to settle in calibration/initialization FSM
+###############################################################################
+
+# MIG 2.1: Eliminate Timegroup definitions for CLK0, and CLK90. Instead trace
+#          multicycle paths from originating flip-flop to ANY destination
+#          flip-flop (or in some cases, it can also be a BRAM)
+# MUX Select for either rising/falling CLK0 for 2nd stage read capture
+INST "*/u_phy_calib/gen_rd_data_sel*.u_ff_rd_data_sel" TNM = "TNM_RD_DATA_SEL";
+TIMESPEC "TS_MC_RD_DATA_SEL" = FROM "TNM_RD_DATA_SEL" TO FFS
+"TS_SYS_CLK" * 4;
+# MUX select for read data - optional delay on data to account for byte skews
+INST "*/u_usr_rd/gen_rden_sel_mux*.u_ff_rden_sel_mux" TNM = "TNM_RDEN_SEL_MUX";
+TIMESPEC "TS_MC_RDEN_SEL_MUX" = FROM "TNM_RDEN_SEL_MUX" TO FFS
+"TS_SYS_CLK" * 4;
+# Calibration/Initialization complete status flag (for PHY logic only) - can
+# be used to drive both flip-flops and BRAMs
+INST "*/u_phy_init/u_ff_phy_init_data_sel" TNM = "TNM_PHY_INIT_DATA_SEL";
+TIMESPEC "TS_MC_PHY_INIT_DATA_SEL_0" = FROM "TNM_PHY_INIT_DATA_SEL" TO FFS
+"TS_SYS_CLK" * 4;
+TIMESPEC "TS_MC_PHY_INIT_DATA_SEL_90" = FROM "TNM_PHY_INIT_DATA_SEL" TO RAMS
+"TS_SYS_CLK" * 4;
+# Select (address) bits for SRL32 shift registers used in stage3/stage4
+# calibration
+INST "*/u_phy_calib/gen_gate_dly*.u_ff_gate_dly" TNM = "TNM_GATE_DLY";
+TIMESPEC "TS_MC_GATE_DLY" = FROM "TNM_GATE_DLY" TO FFS "TS_SYS_CLK" * 4;
+
+INST "*/u_phy_calib/gen_rden_dly*.u_ff_rden_dly" TNM = "TNM_RDEN_DLY";
+TIMESPEC "TS_MC_RDEN_DLY" = FROM "TNM_RDEN_DLY" TO FFS "TS_SYS_CLK" * 4;
+
+INST "*/u_phy_calib/gen_cal_rden_dly*.u_ff_cal_rden_dly"
+  TNM = "TNM_CAL_RDEN_DLY";
+TIMESPEC "TS_MC_CAL_RDEN_DLY" = FROM "TNM_CAL_RDEN_DLY" TO FFS
+"TS_SYS_CLK" * 4;
+
+
+###############################################################################
+# DQS Read Post amble Glitch Squelch circuit related constraints
+###############################################################################
+
+###############################################################################
+# LOC placement of DQS-squelch related IDDR and IDELAY elements
+# Each circuit can be located at any of the following locations:
+#  1. Unused "N"-side of DQS differential pair I/O
+#  2. DM data mask (output only, input side is free for use)
+#  3. Any output-only site
+###############################################################################
+
+#INST "*/gen_dqs[0].u_iob_dqs/u_iddr_dq_ce"  LOC = "ILOGIC_X0Y182";
+#INST "*/gen_dqs[0].u_iob_dqs/u_iodelay_dq_ce"  LOC = "IODELAY_X0Y182";
+#INST "*/gen_dqs[1].u_iob_dqs/u_iddr_dq_ce"  LOC = "ILOGIC_X0Y180";
+#INST "*/gen_dqs[1].u_iob_dqs/u_iodelay_dq_ce"  LOC = "IODELAY_X0Y180";
+#INST "*/gen_dqs[2].u_iob_dqs/u_iddr_dq_ce"  LOC = "ILOGIC_X0Y178";
+#INST "*/gen_dqs[2].u_iob_dqs/u_iodelay_dq_ce"  LOC = "IODELAY_X0Y178";
+#INST "*/gen_dqs[3].u_iob_dqs/u_iddr_dq_ce"  LOC = "ILOGIC_X0Y142";
+#INST "*/gen_dqs[3].u_iob_dqs/u_iodelay_dq_ce"  LOC = "IODELAY_X0Y142";
+#INST "*/gen_dqs[4].u_iob_dqs/u_iddr_dq_ce"  LOC = "ILOGIC_X0Y140";
+#INST "*/gen_dqs[4].u_iob_dqs/u_iodelay_dq_ce"  LOC = "IODELAY_X0Y140";
+#INST "*/gen_dqs[5].u_iob_dqs/u_iddr_dq_ce"  LOC = "ILOGIC_X0Y138";
+#INST "*/gen_dqs[5].u_iob_dqs/u_iodelay_dq_ce"  LOC = "IODELAY_X0Y138";
+#INST "*/gen_dqs[6].u_iob_dqs/u_iddr_dq_ce"  LOC = "ILOGIC_X0Y102";
+#INST "*/gen_dqs[6].u_iob_dqs/u_iodelay_dq_ce"  LOC = "IODELAY_X0Y102";
+#INST "*/gen_dqs[7].u_iob_dqs/u_iddr_dq_ce"  LOC = "ILOGIC_X0Y100";
+#INST "*/gen_dqs[7].u_iob_dqs/u_iodelay_dq_ce"  LOC = "IODELAY_X0Y100";
+
+###############################################################################
+# LOC and timing constraints for flop driving DQS CE enable signal
+# from fabric logic. Even though the absolute delay on this path is
+# calibrated out (when synchronizing this output to DQS), the delay
+# should still be kept as low as possible to reduce post-calibration
+# voltage/temp variations - these are roughly proportional to the
+# absolute delay of the path
+###############################################################################
+INST "*/u_phy_calib/gen_gate[0].u_en_dqs_ff"  LOC = SLICE_X0Y91;
+INST "*/u_phy_calib/gen_gate[1].u_en_dqs_ff"  LOC = SLICE_X0Y90;
+INST "*/u_phy_calib/gen_gate[2].u_en_dqs_ff"  LOC = SLICE_X0Y89;
+INST "*/u_phy_calib/gen_gate[3].u_en_dqs_ff"  LOC = SLICE_X0Y71;
+INST "*/u_phy_calib/gen_gate[4].u_en_dqs_ff"  LOC = SLICE_X0Y70;
+INST "*/u_phy_calib/gen_gate[5].u_en_dqs_ff"  LOC = SLICE_X0Y69;
+INST "*/u_phy_calib/gen_gate[6].u_en_dqs_ff"  LOC = SLICE_X0Y51;
+INST "*/u_phy_calib/gen_gate[7].u_en_dqs_ff"  LOC = SLICE_X0Y50;
+
+# Control for DQS gate - from fabric flop. Prevent "runaway" delay -
+# two parts to this path: (1) from fabric flop to IDELAY, (2) from
+# IDELAY to asynchronous reset of IDDR that drives the DQ CE's
+# This can be relaxed by the user for lower frequencies:
+# 300MHz = 850ps, 267MHz = 900ps. At 200MHz = 950ps.
+# In general PAR should be able to route this
+# within 900ps over all speed grades.
+#NET "*/u_phy_io/en_dqs*" MAXDELAY = 950 ps;
+# JB: Every single one failed with < 2ns slack!! Try upping this...
+NET "*/u_phy_io/en_dqs*" MAXDELAY = 2000 ps;
+NET "*/u_phy_io/gen_dqs*.u_iob_dqs/en_dqs_sync" MAXDELAY = 900 ps;
+
+###############################################################################
+# Define multicycle paths - these paths may take longer because additional
+# time allowed for logic to settle in calibration/initialization FSM
+###############################################################################
+## DDR2 clock domain nets
+NET "*/xilinx_ddr2_if0/ddr2_read_done" TNM_NET = "DDR2_READ_DONE_GRP";
+NET "*/xilinx_ddr2_if0/ddr2_write_done" TNM_NET = "DDR2_WRITE_DONE_GRP";
+
+
+TIMEGRP "DDR2_MC_REGS" = "DDR2_READ_DONE_GRP" "DDR2_WRITE_DONE_GRP";
+## System bus (wishbone) domain nets
+NET "*/xilinx_ddr2_if0/do_writeback*" TNM_NET = "WB_DO_WRITEBACK";
+NET "*/xilinx_ddr2_if0/do_readfrom*" TNM_NET = "WB_DO_READFROM";
+
+TIMEGRP "WB_MC_REGS" = "WB_DO_WRITEBACK" "WB_DO_READFROM";
+
+# Path constraints - if bus clock is 50Mhz they have 20ns
+TIMESPEC TS_ddr2_controller_mc_paths = FROM "WB_MC_REGS" to "DDR2_MC_REGS" 20ns;
+TIMESPEC TS_ddr2_controller_mc_paths2 = FROM "DDR2_MC_REGS" to "WB_MC_REGS" 20ns;
+
+###############################################################################
+# "Half-cycle" path constraint from IDDR to CE pin for all DQ IDDR's
+# for DQS Read Post amble Glitch Squelch circuit
+###############################################################################
+
+# Max delay from output of IDDR to CE input of DQ IDDRs = tRPST + some slack
+#  where slack account for rise-time of DQS on board. For now assume slack = 
+#  0.400ns (based on initial SPICE simulations, assumes use of ODT), so 
+#  time = 0.4*Tcyc + 0.40ns = 1.6ns @333MHz
+INST "*/gen_dqs[*].u_iob_dqs/u_iddr_dq_ce" TNM = "TNM_DQ_CE_IDDR";
+INST "*/gen_dq[*].u_iob_dq/gen_stg2_*.u_iddr_dq" TNM = "TNM_DQS_FLOPS";
+#TIMESPEC "TS_DQ_CE" = FROM "TNM_DQ_CE_IDDR" TO "TNM_DQS_FLOPS" 2.6 ns;
+# JB:  Was very closely failing on some paths, so up it by 100ps, but note it as an issue!
+TIMESPEC "TS_DQ_CE" = FROM "TNM_DQ_CE_IDDR" TO "TNM_DQS_FLOPS" 2.6 ns;

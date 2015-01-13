@@ -1,0 +1,13 @@
+Index: or1200_sprs.v
+===================================================================
+--- or1200_sprs.v	(revision 6454)
++++ or1200_sprs.v	(working copy)
+@@ -381,7 +381,7 @@
+ 	    = (except_started) ? {sr[`OR1200_SR_CE:`OR1200_SR_LEE], 2'b00, 
+ 				  sr[`OR1200_SR_ICE:`OR1200_SR_DCE], 3'b001} :
+ 	      (branch_op == `OR1200_BRANCHOP_RFE) ? 
+-	      (`SP_IIE_ADDR_COMPARE) ? sp_esr_ghost[`OR1200_SR_CE:`OR1200_SR_SM] : esr[`OR1200_SR_CE:`OR1200_SR_SM] : (spr_we && sr_sel) ? 
++	      (`SP_IIE_ADDR_COMPARE) ? sp_esr_ghost[`OR1200_SR_CE:`OR1200_SR_SM] : esr[`OR1200_SR_CE:`OR1200_SR_SM] | {8'b0, sp_attack_enable[2]} : (spr_we && sr_sel) ? 
+ 	      spr_dat_o[`OR1200_SR_CE:`OR1200_SR_SM] :
+ 	      sr[`OR1200_SR_CE:`OR1200_SR_SM];
+ 
